@@ -453,7 +453,7 @@ a {
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 102;
+    z-index: 10002;
 }
 
 .mobile-toggle .bar {
@@ -474,9 +474,13 @@ a {
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border-left: 1px solid var(--border-color);
-    z-index: 99;
+    z-index: 10001;
     padding: 120px 48px;
     transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-backdrop.active {
+    z-index: 10000;
 }
 
 .mobile-menu.open {
