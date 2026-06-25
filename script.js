@@ -167,6 +167,36 @@ document.addEventListener('DOMContentLoaded', () => {
     handleScroll(); // Init on load
 
     // ==========================================================================
+    // Smooth Scrolling & Click Animations for Hash Links
+    // ==========================================================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                
+                // Add a temporary click animation class
+                this.classList.add('btn-clicked');
+                setTimeout(() => this.classList.remove('btn-clicked'), 200);
+
+                // Smooth scroll to section (offset for fixed header)
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open (redundant but safe)
+                if (window.innerWidth <= 768 && typeof closeMenu === 'function') {
+                    closeMenu();
+                }
+            }
+        });
+    });
+
+    // ==========================================================================
     // Mobile Navigation Toggle
     // ==========================================================================
     const mobileToggle = document.querySelector('.mobile-toggle');
