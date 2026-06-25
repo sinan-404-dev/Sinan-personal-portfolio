@@ -171,22 +171,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     const mobileToggle = document.querySelector('.mobile-toggle');
     const mobileMenu = document.querySelector('.mobile-menu');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
+    const mobileBackdrop = document.querySelector('.mobile-backdrop');
+    const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-btn');
+
+    const closeMenu = () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+        mobileBackdrop?.classList.remove('active');
+        document.body.classList.remove('overflow-hidden');
+    };
 
     const toggleMenu = () => {
-        mobileToggle.classList.toggle('active');
-        mobileMenu.classList.toggle('open');
-        document.body.classList.toggle('overflow-hidden');
+        const isOpen = mobileMenu.classList.toggle('open');
+        mobileToggle.classList.toggle('active', isOpen);
+        mobileBackdrop?.classList.toggle('active', isOpen);
+        document.body.classList.toggle('overflow-hidden', isOpen);
     };
 
     mobileToggle.addEventListener('click', toggleMenu);
+    mobileBackdrop?.addEventListener('click', closeMenu);
 
     mobileLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            mobileToggle.classList.remove('active');
-            mobileMenu.classList.remove('open');
-            document.body.classList.remove('overflow-hidden');
-        });
+        link.addEventListener('click', closeMenu);
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            closeMenu();
+        }
     });
 
     // ==========================================================================
@@ -239,6 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const serviceCards = document.querySelectorAll('.service-card');
     
     serviceCards.forEach(card => {
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left; 
@@ -275,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroImg = document.querySelector('.subject-img');
     const radar = document.querySelector('.tech-radar');
 
-    if (heroImageCol && heroImg) {
+    if (heroImageCol && heroImg && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
         heroImageCol.addEventListener('mousemove', (e) => {
             const rect = heroImageCol.getBoundingClientRect();
             const width = rect.width;
