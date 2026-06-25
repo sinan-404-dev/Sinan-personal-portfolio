@@ -476,7 +476,7 @@ a {
     border-left: 1px solid var(--border-color);
     z-index: 99;
     padding: 120px 48px;
-    transition: var(--transition-smooth);
+    transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-menu.open {
@@ -506,6 +506,9 @@ a {
     padding: 16px;
     font-size: 1rem;
     text-align: center;
+    display: flex;
+    width: 100%;
+    justify-content: center;
 }
 
 .mobile-toggle.active .bar:nth-child(1) {
@@ -1896,7 +1899,26 @@ body.overflow-hidden {
     }
 
     .hero-image-col {
+        height: 480px;
+        max-width: 100%;
+    }
+
+    .tech-radar {
+        width: 360px;
         height: 360px;
+    }
+
+    .rc1 { width: 200px; height: 200px; }
+    .rc2 { width: 280px; height: 280px; }
+    .rc3 { width: 360px; height: 360px; }
+
+    .subject-glow-backdrop {
+        width: 300px;
+        height: 300px;
+    }
+
+    .subject-img {
+        transform: translateY(10px) scale(1.25);
     }
 
     .hero-terminal-overlay {
@@ -2030,25 +2052,25 @@ body.overflow-hidden {
     }
 
     .hero-image-col {
-        height: 300px;
+        height: 400px;
     }
 
     .tech-radar {
-        width: 260px;
-        height: 260px;
+        width: 300px;
+        height: 300px;
     }
 
-    .rc1 { width: 140px; height: 140px; }
-    .rc2 { width: 200px; height: 200px; }
-    .rc3 { width: 260px; height: 260px; }
+    .rc1 { width: 160px; height: 160px; }
+    .rc2 { width: 240px; height: 240px; }
+    .rc3 { width: 300px; height: 300px; }
 
     .subject-glow-backdrop {
-        width: 200px;
-        height: 200px;
+        width: 240px;
+        height: 240px;
     }
 
     .subject-img {
-        transform: translateY(10px) scale(1.05);
+        transform: translateY(10px) scale(1.15);
     }
 
     .hero-bullets {
