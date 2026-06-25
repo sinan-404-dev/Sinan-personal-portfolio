@@ -2603,3 +2603,15 @@ body.overflow-hidden {
         max-height: 70vh;
     }
 }
+
+/* ==========================================================================
+   Click & Active Animations for Buttons
+   ========================================================================== */
+.btn-clicked, 
+.btn-primary:active, 
+.btn-secondary:active, 
+.btn-nav:active,
+.mobile-link:active {
+    transform: scale(0.92) !important;
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
