@@ -413,4 +413,141 @@ document.addEventListener('DOMContentLoaded', () => {
         successOverlay.classList.remove('show');
     });
 
+    // ==========================================================================
+    // Floating Chat Widget
+    // ==========================================================================
+    const chatToggle     = document.getElementById('chat-toggle');
+    const chatPanel      = document.getElementById('chat-panel');
+    const chatIconOpen   = document.getElementById('chat-icon-open');
+    const chatIconClose  = document.getElementById('chat-icon-close');
+    const chatBadge      = document.getElementById('chat-badge');
+    const chatMessages   = document.getElementById('chat-messages');
+    const chatSendBtn    = document.getElementById('chat-send-btn');
+    const chatTextarea   = document.getElementById('chat-message-input');
+    const chatFormArea   = document.getElementById('chat-form-area');
+    const chatSuccess    = document.getElementById('chat-success');
+    const chatNewMsgBtn  = document.getElementById('chat-new-msg-btn');
+    const chatCloseBtn   = document.getElementById('chat-close-btn');
+    const chatNameInput  = document.getElementById('chat-visitor-name');
+    const chatEmailInput = document.getElementById('chat-visitor-email');
+
+    if (!chatToggle) return;
+
+    let chatOpen = false;
+
+    function openChat() {
+        chatOpen = true;
+        chatPanel.classList.remove('chat-panel-hidden');
+        chatIconOpen.classList.add('chat-icon-hidden');
+        chatIconClose.classList.remove('chat-icon-hidden');
+        chatBadge.classList.add('hidden');
+        // Auto-scroll to bottom
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 100);
+    }
+
+    function closeChat() {
+        chatOpen = false;
+        chatPanel.classList.add('chat-panel-hidden');
+        chatIconOpen.classList.remove('chat-icon-hidden');
+        chatIconClose.classList.add('chat-icon-hidden');
+    }
+
+    chatToggle.addEventListener('click', () => chatOpen ? closeChat() : openChat());
+    chatCloseBtn.addEventListener('click', closeChat);
+
+    // Auto-expand textarea
+    chatTextarea.addEventListener('input', () => {
+        chatTextarea.style.height = 'auto';
+        chatTextarea.style.height = Math.min(chatTextarea.scrollHeight, 100) + 'px';
+    });
+
+    // Send on Enter (Shift+Enter = newline)
+    chatTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+
+    chatSendBtn.addEventListener('click', sendChatMessage);
+
+    function addMessage(text, type, time) {
+        const msg = document.createElement('div');
+        msg.className = `chat-msg chat-msg-${type}`;
+        const now = time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        msg.innerHTML = `
+            <div class="chat-bubble">${text}</div>
+            <div class="chat-time">${now}</div>
+        `;
+        chatMessages.appendChild(msg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const typing = document.createElement('div');
+        typing.className = 'chat-msg chat-msg-in';
+        typing.id = 'chat-typing-indicator';
+        typing.innerHTML = `
+            <div class="chat-typing">
+                <span></span><span></span><span></span>
+            </div>
+        `;
+        chatMessages.appendChild(typing);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        const t = document.getElementById('chat-typing-indicator');
+        if (t) t.remove();
+    }
+
+    async function sendChatMessage() {
+        const message = chatTextarea.value.trim();
+        const name    = chatNameInput ? chatNameInput.value.trim() : '';
+
+        if (!message) return;
+
+        // Show visitor's message bubble
+        addMessage(message, 'out');
+        chatTextarea.value = '';
+        chatTextarea.style.height = 'auto';
+        chatSendBtn.disabled = true;
+
+        // Show typing indicator briefly
+        showTypingIndicator();
+
+        // Build WhatsApp URL with pre-filled message
+        const intro = name ? `Hi Muhammed! I'm ${name}.\n\n` : 'Hi Muhammed!\n\n';
+        const waText = encodeURIComponent(intro + message);
+        const waUrl  = `https://wa.me/916282173983?text=${waText}`;
+
+        // After short delay — remove typing, show redirect message, then open WhatsApp
+        setTimeout(() => {
+            removeTypingIndicator();
+            addMessage('Opening WhatsApp... You\'ll continue the conversation there! 💬', 'in');
+            chatSendBtn.disabled = false;
+
+            // Open WhatsApp after another brief moment
+            setTimeout(() => {
+                window.open(waUrl, '_blank');
+            }, 900);
+        }, 1500);
+    }
+
+    // "Send another" resets the chat
+    chatNewMsgBtn.addEventListener('click', () => {
+        chatSuccess.style.display = 'none';
+        chatFormArea.style.display = '';
+        chatTextarea.value = '';
+        chatTextarea.style.height = 'auto';
+        chatSendBtn.disabled = false;
+    });
+
+    // Show badge after 3 seconds if chat not opened yet
+    setTimeout(() => {
+        if (!chatOpen) chatBadge.classList.remove('hidden');
+    }, 3000);
+
 });
