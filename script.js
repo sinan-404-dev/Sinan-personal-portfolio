@@ -10,25 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatOnlineDot = document.querySelector('.chat-online-dot');
         const chatStatusText = document.querySelector('.chat-header-status');
 
-        const updateUI = () => {
-            let config = {
-                status: 'online',
-                badgeText: "Available for Projects — Let's Build Something!",
-                chatText: "Typically replies instantly"
-            };
+        const colors = {
+            online: { bg: '#00FF66', shadow: '0 0 12px #00FF66' },
+            busy: { bg: '#FFCC00', shadow: '0 0 12px #FFCC00' },
+            offline: { bg: '#FF3333', shadow: '0 0 12px #FF3333' }
+        };
 
-            const saved = localStorage.getItem(STATUS_KEY);
-            if (saved) {
-                try { config = JSON.parse(saved); } catch(e){}
-            }
-
-            // Dot styles
-            const colors = {
-                online: { bg: '#00FF66', shadow: '0 0 12px #00FF66' },
-                busy: { bg: '#FFCC00', shadow: '0 0 12px #FFCC00' },
-                offline: { bg: '#FF3333', shadow: '0 0 12px #FF3333' }
-            };
-
+        const renderUI = (config) => {
             const current = colors[config.status] || colors.online;
 
             if (badgeDot) {
@@ -47,11 +35,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Listen for storage changes from admin.html
-        window.addEventListener('storage', updateUI);
-        // Polling fallback
-        setInterval(updateUI, 2000);
-        updateUI();
+        const fetchPublicStatus = async () => {
+            const cacheBuster = '?t=' + Date.now();
+            try {
+                // Try local Vercel status.json
+                const res = await fetch('/status.json' + cacheBuster);
+                if (res.ok) {
+                    const data = await res.json();
+                    renderUI(data);
+                    return;
+                }
+            } catch(e) {}
+
+            try {
+                // Fallback to raw GitHub status.json
+                const ghRes = await fetch('https://raw.githubusercontent.com/sinan-404-dev/Sinan-personal-portfolio/main/status.json' + cacheBuster);
+                if (ghRes.ok) {
+                    const ghData = await ghRes.json();
+                    renderUI(ghData);
+                }
+            } catch(e) {}
+        };
+
+        const updateFromLocalStorage = () => {
+            let config = {
+                status: 'online',
+                badgeText: "Available for Projects — Let's Build Something!",
+                chatText: "Typically replies instantly"
+            };
+            const saved = localStorage.getItem(STATUS_KEY);
+            if (saved) {
+                try { config = JSON.parse(saved); } catch(e){}
+            }
+            renderUI(config);
+        };
+
+        // 1. Instant 0ms render from localStorage
+        updateFromLocalStorage();
+
+        // 2. Fetch live public status.json from server/CDN
+        fetchPublicStatus();
+
+        // 3. Listen for tab events & poll every 4 seconds for live public visitors
+        window.addEventListener('storage', () => {
+            updateFromLocalStorage();
+            fetchPublicStatus();
+        });
+        setInterval(fetchPublicStatus, 4000);
     };
 
     initAvailabilitySync();
