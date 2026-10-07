@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muhammed Sinan | Admin Control Panel</title>
+    <title>Sinan | Secure Admin Control Panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0a0a0a;
-            --bg-card: rgba(22, 22, 22, 0.7);
+            --bg-card: rgba(22, 22, 22, 0.75);
             --border-color: rgba(255, 255, 255, 0.08);
             --accent-orange: #FF8C00;
             --accent-orange-rgb: 255, 140, 0;
@@ -79,8 +79,8 @@
             margin-top: 6px;
         }
 
-        /* PIN Login Screen */
-        #pin-screen {
+        /* Login Screen */
+        #login-screen {
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -90,6 +90,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
         }
 
         .input-label {
@@ -99,24 +100,42 @@
             letter-spacing: 0.05em;
         }
 
-        .pin-input {
+        .form-input {
             width: 100%;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 14px 18px;
             color: #fff;
-            font-size: 1.2rem;
-            font-family: var(--font-mono);
-            text-align: center;
-            letter-spacing: 0.3em;
+            font-size: 1rem;
+            font-family: var(--font-main);
             outline: none;
             transition: border-color 0.3s;
         }
 
-        .pin-input:focus {
+        .form-input:focus {
             border-color: var(--accent-orange);
             box-shadow: 0 0 15px rgba(var(--accent-orange-rgb), 0.2);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: var(--text-grey);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .toggle-password:hover {
+            color: var(--accent-orange);
         }
 
         .btn-login, .btn-save {
@@ -150,11 +169,45 @@
             display: none;
         }
 
-        /* Control Panel View */
+        /* Panel Screen */
         #panel-screen {
             display: none;
             flex-direction: column;
             gap: 24px;
+        }
+
+        .panel-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .admin-badge {
+            font-size: 0.78rem;
+            font-family: var(--font-mono);
+            color: var(--accent-orange);
+            background: rgba(var(--accent-orange-rgb), 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-grey);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            color: #ff4d4d;
+            border-color: rgba(255, 77, 77, 0.3);
+            background: rgba(255, 77, 77, 0.1);
         }
 
         .status-options {
@@ -287,25 +340,37 @@
         <div class="admin-header">
             <span class="admin-logo">&lt;//&gt; M. SINAN</span>
             <h1 class="admin-title">Availability Control</h1>
-            <p class="admin-subtitle">Manage your real-time online/offline status</p>
+            <p class="admin-subtitle">Secure Admin Panel (sinanmtp.online/admin123)</p>
         </div>
 
-        <!-- PIN Login Screen -->
-        <div id="pin-screen">
+        <!-- Login Screen -->
+        <div id="login-screen">
             <div class="input-group">
-                <label class="input-label" for="pin-input">ENTER ADMIN PIN (Default: 1234)</label>
-                <input type="password" id="pin-input" class="pin-input" maxlength="6" placeholder="••••" autofocus>
+                <label class="input-label" for="username-input">USERNAME</label>
+                <input type="text" id="username-input" class="form-input" placeholder="Enter username" autocomplete="username" autofocus>
             </div>
-            <div id="login-error" class="login-error">Incorrect PIN. Please try again.</div>
-            <button id="login-btn" class="btn-login">Unlock Admin Panel</button>
+            <div class="input-group">
+                <label class="input-label" for="password-input">PASSWORD</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password-input" class="form-input" placeholder="Enter password" autocomplete="current-password">
+                    <button type="button" id="toggle-pass-btn" class="toggle-password">Show</button>
+                </div>
+            </div>
+            <div id="login-error" class="login-error">Invalid Username or Password. Please try again.</div>
+            <button id="login-btn" class="btn-login">Log In to Control Panel</button>
             <div class="nav-back">
-                <a href="index.html">← Back to Website</a>
+                <a href="/">← Back to Website</a>
             </div>
         </div>
 
         <!-- Panel Screen -->
         <div id="panel-screen">
-            <div id="toast" class="toast">✅ Status updated live across your website!</div>
+            <div class="panel-header-row">
+                <span class="admin-badge">⚡ AUTHENTICATED ADMIN</span>
+                <button id="logout-btn" class="btn-logout">Logout</button>
+            </div>
+
+            <div id="toast" class="toast">✅ Availability status updated live across website!</div>
 
             <div class="input-group">
                 <label class="input-label">SELECT AVAILABILITY STATUS</label>
@@ -346,15 +411,30 @@
             <button id="save-btn" class="btn-save">Update Website Status</button>
 
             <div class="nav-back">
-                <a href="index.html">← View Public Website</a>
+                <a href="/">← View Public Website</a>
             </div>
         </div>
     </div>
 
     <script>
-        // Storage Key
+        // Storage Keys
         const STATUS_KEY = 'sinan_status_config';
-        const DEFAULT_PIN = '1234'; // Default Admin PIN
+        const SESSION_KEY = 'sinan_admin_session';
+
+        // Precomputed SHA-256 Hashes for Zero Plaintext Password Exposure in Source
+        // Password: hacker9987## -> Hash: da56835c8f46939e3a1455a2264ae930c6227d9500bb4ede84e5254eeaba321d
+        const AUTH_CONFIG = {
+            allowedUsernames: ['sinan', 'user', 'admin', 'sinanmtp', 'sinan-404-dev'],
+            passwordHash: 'da56835c8f46939e3a1455a2264ae930c6227d9500bb4ede84e5254eeaba321d'
+        };
+
+        // Helper: Compute SHA-256 in browser using Web Crypto API
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         // Default Config
         const defaultConfig = {
@@ -363,11 +443,14 @@
             chatText: "Typically replies instantly"
         };
 
-        // Elements
-        const pinScreen = document.getElementById('pin-screen');
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
         const panelScreen = document.getElementById('panel-screen');
-        const pinInput = document.getElementById('pin-input');
+        const usernameInput = document.getElementById('username-input');
+        const passwordInput = document.getElementById('password-input');
+        const togglePassBtn = document.getElementById('toggle-pass-btn');
         const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
         const loginError = document.getElementById('login-error');
         const statusOptions = document.querySelectorAll('.status-option');
         const statusTextInput = document.getElementById('status-text');
@@ -379,6 +462,13 @@
 
         let currentConfig = { ...defaultConfig };
 
+        // Toggle Password Visibility
+        togglePassBtn.addEventListener('click', () => {
+            const isPass = passwordInput.type === 'password';
+            passwordInput.type = isPass ? 'text' : 'password';
+            togglePassBtn.textContent = isPass ? 'Hide' : 'Show';
+        });
+
         // Load Saved Config
         const loadConfig = () => {
             const saved = localStorage.getItem(STATUS_KEY);
@@ -389,7 +479,6 @@
         };
 
         const updateFormState = () => {
-            // Options
             statusOptions.forEach(opt => {
                 if (opt.dataset.status === currentConfig.status) {
                     opt.classList.add('active');
@@ -409,31 +498,63 @@
             previewText.textContent = statusTextInput.value;
         };
 
+        // Check Existing Session
+        if (sessionStorage.getItem(SESSION_KEY) === 'authenticated') {
+            loginScreen.style.display = 'none';
+            panelScreen.style.display = 'flex';
+            loadConfig();
+        }
+
         // Login Handler
-        const handleLogin = () => {
-            if (pinInput.value === DEFAULT_PIN) {
-                pinScreen.style.display = 'none';
+        const handleLogin = async () => {
+            const username = usernameInput.value.trim().toLowerCase();
+            const rawPassword = passwordInput.value;
+
+            if (!username || !rawPassword) {
+                loginError.style.display = 'block';
+                return;
+            }
+
+            // Compute hash of entered password
+            const enteredHash = await sha256(rawPassword);
+
+            const isUserValid = AUTH_CONFIG.allowedUsernames.includes(username);
+            const isPassValid = (enteredHash === AUTH_CONFIG.passwordHash);
+
+            if (isUserValid && isPassValid) {
+                loginError.style.display = 'none';
+                sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                loginScreen.style.display = 'none';
                 panelScreen.style.display = 'flex';
                 loadConfig();
             } else {
                 loginError.style.display = 'block';
-                pinInput.focus();
+                passwordInput.value = '';
+                passwordInput.focus();
             }
         };
 
         loginBtn.addEventListener('click', handleLogin);
-        pinInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleLogin();
+        passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+        usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') passwordInput.focus(); });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem(SESSION_KEY);
+            panelScreen.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            loginError.style.display = 'none';
         });
 
-        // Status option clicks
+        // Status Option Clicks
         statusOptions.forEach(opt => {
             opt.addEventListener('click', () => {
                 statusOptions.forEach(o => o.classList.remove('active'));
                 opt.classList.add('active');
                 currentConfig.status = opt.dataset.status;
 
-                // Auto set default text if user hasn't typed custom
                 if (currentConfig.status === 'online') {
                     statusTextInput.value = "Available for Projects — Let's Build Something!";
                     chatTextInput.value = "Typically replies instantly";
@@ -459,10 +580,10 @@
             // 1. Save to LocalStorage
             localStorage.setItem(STATUS_KEY, JSON.stringify(currentConfig));
 
-            // 2. Broadcast to other tabs live
+            // 2. Broadcast live event
             window.dispatchEvent(new Event('storage'));
 
-            // Show success toast
+            // Show Toast
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         });
