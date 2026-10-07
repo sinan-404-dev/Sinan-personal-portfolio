@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammed Sinan | Admin Control Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-card: rgba(22, 22, 22, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-orange: #FF8C00;
+            --accent-orange-rgb: 255, 140, 0;
+            --text-cream: #E1DDCF;
+            --text-grey: #999999;
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-cream);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(var(--accent-orange-rgb), 0.08), transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(var(--accent-orange-rgb), 0.05), transparent 40%);
+        }
+
+        .admin-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 32px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 40px rgba(var(--accent-orange-rgb), 0.05);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .admin-logo {
+            font-family: var(--font-mono);
+            color: var(--accent-orange);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .admin-title {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .admin-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-grey);
+            margin-top: 6px;
+        }
+
+        /* PIN Login Screen */
+        #pin-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            color: var(--text-grey);
+            letter-spacing: 0.05em;
+        }
+
+        .pin-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #fff;
+            font-size: 1.2rem;
+            font-family: var(--font-mono);
+            text-align: center;
+            letter-spacing: 0.3em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .pin-input:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 15px rgba(var(--accent-orange-rgb), 0.2);
+        }
+
+        .btn-login, .btn-save {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-orange), #e05a00);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(var(--accent-orange-rgb), 0.35);
+        }
+
+        .btn-login:hover, .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(var(--accent-orange-rgb), 0.5);
+        }
+
+        .btn-login:active, .btn-save:active {
+            transform: scale(0.98);
+        }
+
+        .login-error {
+            color: #ff4d4d;
+            font-size: 0.82rem;
+            text-align: center;
+            display: none;
+        }
+
+        /* Control Panel View */
+        #panel-screen {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .status-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .status-option {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-option:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .status-option.active {
+            border-color: var(--accent-orange);
+            background: rgba(var(--accent-orange-rgb), 0.1);
+        }
+
+        .status-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .dot-online { background: #00FF66; box-shadow: 0 0 10px #00FF66; }
+        .dot-busy { background: #FFCC00; box-shadow: 0 0 10px #FFCC00; }
+        .dot-offline { background: #FF3333; box-shadow: 0 0 10px #FF3333; }
+
+        .status-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .text-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: var(--font-main);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .text-input:focus {
+            border-color: var(--accent-orange);
+        }
+
+        .preview-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .preview-title {
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            color: var(--text-grey);
+            text-transform: uppercase;
+        }
+
+        .preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            width: fit-content;
+        }
+
+        .toast {
+            background: #22c55e;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-back {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .nav-back a {
+            color: var(--text-grey);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-back a:hover {
+            color: var(--accent-orange);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <div class="admin-header">
+            <span class="admin-logo">&lt;//&gt; M. SINAN</span>
+            <h1 class="admin-title">Availability Control</h1>
+            <p class="admin-subtitle">Manage your real-time online/offline status</p>
+        </div>
+
+        <!-- PIN Login Screen -->
+        <div id="pin-screen">
+            <div class="input-group">
+                <label class="input-label" for="pin-input">ENTER ADMIN PIN (Default: 1234)</label>
+                <input type="password" id="pin-input" class="pin-input" maxlength="6" placeholder="••••" autofocus>
+            </div>
+            <div id="login-error" class="login-error">Incorrect PIN. Please try again.</div>
+            <button id="login-btn" class="btn-login">Unlock Admin Panel</button>
+            <div class="nav-back">
+                <a href="index.html">← Back to Website</a>
+            </div>
+        </div>
+
+        <!-- Panel Screen -->
+        <div id="panel-screen">
+            <div id="toast" class="toast">✅ Status updated live across your website!</div>
+
+            <div class="input-group">
+                <label class="input-label">SELECT AVAILABILITY STATUS</label>
+                <div class="status-options">
+                    <div class="status-option active" data-status="online">
+                        <span class="status-dot dot-online"></span>
+                        <span class="status-label">Online</span>
+                    </div>
+                    <div class="status-option" data-status="busy">
+                        <span class="status-dot dot-busy"></span>
+                        <span class="status-label">Busy</span>
+                    </div>
+                    <div class="status-option" data-status="offline">
+                        <span class="status-dot dot-offline"></span>
+                        <span class="status-label">Offline</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="status-text">HERO BADGE TEXT</label>
+                <input type="text" id="status-text" class="text-input" value="Available for Projects — Let's Build Something!">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="chat-text">LIVE CHAT STATUS SUBTEXT</label>
+                <input type="text" id="chat-text" class="text-input" value="Typically replies instantly">
+            </div>
+
+            <div class="preview-box">
+                <span class="preview-title">Live Homepage Preview</span>
+                <div class="preview-badge">
+                    <span id="preview-dot" class="status-dot dot-online"></span>
+                    <span id="preview-text" style="font-size: 0.8rem; color: #999;">Available for Projects — Let's Build Something!</span>
+                </div>
+            </div>
+
+            <button id="save-btn" class="btn-save">Update Website Status</button>
+
+            <div class="nav-back">
+                <a href="index.html">← View Public Website</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Storage Key
+        const STATUS_KEY = 'sinan_status_config';
+        const DEFAULT_PIN = '1234'; // Default Admin PIN
+
+        // Default Config
+        const defaultConfig = {
+            status: 'online', // 'online', 'busy', 'offline'
+            badgeText: "Available for Projects — Let's Build Something!",
+            chatText: "Typically replies instantly"
+        };
+
+        // Elements
+        const pinScreen = document.getElementById('pin-screen');
+        const panelScreen = document.getElementById('panel-screen');
+        const pinInput = document.getElementById('pin-input');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const statusOptions = document.querySelectorAll('.status-option');
+        const statusTextInput = document.getElementById('status-text');
+        const chatTextInput = document.getElementById('chat-text');
+        const previewDot = document.getElementById('preview-dot');
+        const previewText = document.getElementById('preview-text');
+        const saveBtn = document.getElementById('save-btn');
+        const toast = document.getElementById('toast');
+
+        let currentConfig = { ...defaultConfig };
+
+        // Load Saved Config
+        const loadConfig = () => {
+            const saved = localStorage.getItem(STATUS_KEY);
+            if (saved) {
+                try { currentConfig = JSON.parse(saved); } catch(e){}
+            }
+            updateFormState();
+        };
+
+        const updateFormState = () => {
+            // Options
+            statusOptions.forEach(opt => {
+                if (opt.dataset.status === currentConfig.status) {
+                    opt.classList.add('active');
+                } else {
+                    opt.classList.remove('active');
+                }
+            });
+
+            statusTextInput.value = currentConfig.badgeText;
+            chatTextInput.value = currentConfig.chatText;
+            updatePreview();
+        };
+
+        const updatePreview = () => {
+            const status = currentConfig.status;
+            previewDot.className = 'status-dot ' + (status === 'online' ? 'dot-online' : status === 'busy' ? 'dot-busy' : 'dot-offline');
+            previewText.textContent = statusTextInput.value;
+        };
+
+        // Login Handler
+        const handleLogin = () => {
+            if (pinInput.value === DEFAULT_PIN) {
+                pinScreen.style.display = 'none';
+                panelScreen.style.display = 'flex';
+                loadConfig();
+            } else {
+                loginError.style.display = 'block';
+                pinInput.focus();
+            }
+        };
+
+        loginBtn.addEventListener('click', handleLogin);
+        pinInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        // Status option clicks
+        statusOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                statusOptions.forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                currentConfig.status = opt.dataset.status;
+
+                // Auto set default text if user hasn't typed custom
+                if (currentConfig.status === 'online') {
+                    statusTextInput.value = "Available for Projects — Let's Build Something!";
+                    chatTextInput.value = "Typically replies instantly";
+                } else if (currentConfig.status === 'busy') {
+                    statusTextInput.value = "In a Client Session — Replies may be delayed";
+                    chatTextInput.value = "Busy in a session";
+                } else if (currentConfig.status === 'offline') {
+                    statusTextInput.value = "Currently Offline — Back Soon!";
+                    chatTextInput.value = "Currently offline";
+                }
+
+                updatePreview();
+            });
+        });
+
+        statusTextInput.addEventListener('input', updatePreview);
+
+        // Save & Broadcast
+        saveBtn.addEventListener('click', () => {
+            currentConfig.badgeText = statusTextInput.value.trim() || defaultConfig.badgeText;
+            currentConfig.chatText = chatTextInput.value.trim() || defaultConfig.chatText;
+
+            // 1. Save to LocalStorage
+            localStorage.setItem(STATUS_KEY, JSON.stringify(currentConfig));
+
+            // 2. Broadcast to other tabs live
+            window.dispatchEvent(new Event('storage'));
+
+            // Show success toast
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        });
+    </script>
+</body>
+</html>

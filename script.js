@@ -1,6 +1,62 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // ==========================================================================
+    // Real-Time Availability Status Sync (Admin Panel Integration)
+    // ==========================================================================
+    const initAvailabilitySync = () => {
+        const STATUS_KEY = 'sinan_status_config';
+        const badgeDot = document.querySelector('.badge-dot');
+        const badgeText = document.querySelector('.badge-text');
+        const chatOnlineDot = document.querySelector('.chat-online-dot');
+        const chatStatusText = document.querySelector('.chat-header-status');
+
+        const updateUI = () => {
+            let config = {
+                status: 'online',
+                badgeText: "Available for Projects — Let's Build Something!",
+                chatText: "Typically replies instantly"
+            };
+
+            const saved = localStorage.getItem(STATUS_KEY);
+            if (saved) {
+                try { config = JSON.parse(saved); } catch(e){}
+            }
+
+            // Dot styles
+            const colors = {
+                online: { bg: '#00FF66', shadow: '0 0 12px #00FF66' },
+                busy: { bg: '#FFCC00', shadow: '0 0 12px #FFCC00' },
+                offline: { bg: '#FF3333', shadow: '0 0 12px #FF3333' }
+            };
+
+            const current = colors[config.status] || colors.online;
+
+            if (badgeDot) {
+                badgeDot.style.backgroundColor = current.bg;
+                badgeDot.style.boxShadow = current.shadow;
+            }
+            if (badgeText) {
+                badgeText.textContent = config.badgeText;
+            }
+            if (chatOnlineDot) {
+                chatOnlineDot.style.backgroundColor = current.bg;
+                chatOnlineDot.style.boxShadow = current.shadow;
+            }
+            if (chatStatusText) {
+                chatStatusText.innerHTML = `<span class="chat-online-dot" style="background-color:${current.bg}; box-shadow:${current.shadow}"></span> ${config.chatText}`;
+            }
+        };
+
+        // Listen for storage changes from admin.html
+        window.addEventListener('storage', updateUI);
+        // Polling fallback
+        setInterval(updateUI, 2000);
+        updateUI();
+    };
+
+    initAvailabilitySync();
+
+    // ==========================================================================
     // Interactive Network Node Canvas Background (SaaS Premium Visual)
     // ==========================================================================
     const initNetworkCanvas = () => {
