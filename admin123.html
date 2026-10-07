@@ -572,16 +572,25 @@
 
         statusTextInput.addEventListener('input', updatePreview);
 
-        // Save & Broadcast
-        saveBtn.addEventListener('click', () => {
+        // Save & Broadcast to Cloud & Local
+        saveBtn.addEventListener('click', async () => {
             currentConfig.badgeText = statusTextInput.value.trim() || defaultConfig.badgeText;
             currentConfig.chatText = chatTextInput.value.trim() || defaultConfig.chatText;
 
             // 1. Save to LocalStorage
             localStorage.setItem(STATUS_KEY, JSON.stringify(currentConfig));
 
-            // 2. Broadcast live event
+            // 2. Broadcast live event locally
             window.dispatchEvent(new Event('storage'));
+
+            // 3. Post to Vercel Serverless Cloud API (/api/status) for ALL public visitors
+            try {
+                await fetch('/api/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentConfig)
+                });
+            } catch(e) {}
 
             // Show Toast
             toast.style.display = 'block';

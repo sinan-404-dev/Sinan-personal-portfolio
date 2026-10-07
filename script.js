@@ -38,7 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const fetchPublicStatus = async () => {
             const cacheBuster = '?t=' + Date.now();
             try {
-                // Try local Vercel status.json
+                // 1. Try real-time Vercel Cloud API (/api/status)
+                const apiRes = await fetch('/api/status' + cacheBuster);
+                if (apiRes.ok) {
+                    const apiData = await apiRes.json();
+                    if (apiData && apiData.status) {
+                        renderUI(apiData);
+                        return;
+                    }
+                }
+            } catch(e) {}
+
+            try {
+                // 2. Try static status.json
                 const res = await fetch('/status.json' + cacheBuster);
                 if (res.ok) {
                     const data = await res.json();
@@ -48,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch(e) {}
 
             try {
-                // Fallback to raw GitHub status.json
+                // 3. Fallback to raw GitHub status.json
                 const ghRes = await fetch('https://raw.githubusercontent.com/sinan-404-dev/Sinan-personal-portfolio/main/status.json' + cacheBuster);
                 if (ghRes.ok) {
                     const ghData = await ghRes.json();
